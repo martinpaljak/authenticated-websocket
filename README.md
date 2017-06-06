@@ -12,6 +12,7 @@ The main purpose of this convention is to support classical PKI X509 client cert
 - The first message from the server to the client MUST be a text frame with a JSON object with a `nonce` field as a string
 - The first message from the client to the server MUST be a text frame with a JSON object with a `token` field as a string
 - The first message from the server to the client or from the client to the server MAY contain other fields in the JSON object, than the ones described above
+- The `nonce` field of the first message from the server to the client MUST be unique to the session and with enough entropy, e.g. random data fed to an approved hash algorithm or coming from a well-seeded CSPRNG.
 - The `token` field of the first message from the client to the server MUST contain a JWT with a `nonce` field in the decoded payload, which value matches the `nonce` field of the first message from the server to the client
 - The server application MUST check that
   - the `nonce` field of the JWT payload MUST match the nonce sent by the server
