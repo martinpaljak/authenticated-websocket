@@ -7,17 +7,17 @@ Authenticated WebSocket is not a separate protocol (or a [WebSocket subprotocol]
 The main purpose of this convention is to support classical PKI X509 client certificate based authentication with a smooth and controllable user experience. While this reference implementation is for [NodeJS](https://nodejs.org/en/download/current/) and utilizes [X509 ID tokens](https://github.com/martinpaljak/x509-webauth/wiki/OpenID-X509-ID-Token) (a profile of [OpenID Connect ID token](http://openid.net/specs/openid-connect-core-1_0.html#IDToken)), the convention does not restrict the type of [JSON Web Tokens (JWT)](https://tools.ietf.org/html/rfc7519) that could be used to transport the authentication claim, as long as the token contains the `nonce` field.
 
 ## The convention
-- Authenticated WebSocket MUST utilize a secure WebSocket connection (`wss://`)
+- Authenticated WebSocket MUST use a secure WebSocket connection (`wss://`)
 - The application SHOULD check the `origin` of the connection to match the acceptance criteria of the application, before processing the authentication messages
 - The first message from the server to the client MUST be a text frame with a JSON object with a `nonce` field as a string
 - The first message from the client to the server MUST be a text frame with a JSON object with a `token` field as a string
-- The first message from the server to the client or from the client to the server MAY contain other fields than the ones described above in the JSON object
-- The first message from the client to the server MUST contain a JWT with the `nonce` field in the payload, matching the `nonce` field of the first message from the server to the client
+- The first message from the server to the client or from the client to the server MAY contain other fields in the JSON object, than the ones described above
+- The `token` field of the first message from the client to the server MUST contain a JWT with a `nonce` field in the decoded payload, which value matches the `nonce` field of the first message from the server to the client
 - The server application MUST check that
-  - the `nonce` of the JWT payload MUST match the nonce sent by the server
+  - the `nonce` field of the JWT payload MUST match the nonce sent by the server
   - the `aud` field of the JWT payload MUST match the origin of the WebSocket connection and that the origin is in the scope of accepted origins for the application
-  - the `iat` and `exp` fields MUST be within the accepted time window for the application
-  - the signature of the JWT payload MUST be verified and that the used algorithm is approved for the application
+  - the `iat` and `exp` fields of the JWT payload MUST be within the accepted time window for the application
+  - the signature of the JWT payload MUST be verified and that the used algorithm MUST be approved for the application
   - if the JWT contains a `x5c` certificate in the header, the signature of the JWT MUST match the certificate and the application MUST perform any necessary certificate validity checks, such as OCSP
 - Either the client or the server SHOULD close the WebSocket if any of the conditions above are not fulfilled
 
